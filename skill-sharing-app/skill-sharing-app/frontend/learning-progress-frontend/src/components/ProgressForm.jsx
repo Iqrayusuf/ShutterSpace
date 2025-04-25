@@ -76,53 +76,81 @@ export default function ProgressForm({ onAdded }) {
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit} style={{ border: "1px solid #ddd", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
-                <h2>📝 Share Your Learning Progress</h2>
+        <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg border">
+            <ToastContainer />
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-blue-700">
+                📘 Add a New Learning Progress
+            </h2>
 
-                <p><strong>Template</strong></p>
-                <label><input type="radio" value="Completed Tutorial" checked={templateType === "Completed Tutorial"} onChange={(e) => setTemplateType(e.target.value)} /> Completed a Tutorial</label><br />
-                <label><input type="radio" value="Learned New Skill" checked={templateType === "Learned New Skill"} onChange={(e) => setTemplateType(e.target.value)} /> Learned a New Skill</label><br />
-                <label><input type="radio" value="General Update" checked={templateType === "General Update"} onChange={(e) => setTemplateType(e.target.value)} /> General Update</label><br />
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                    <label className="block font-medium text-gray-700 mb-1">📂 Select Template</label>
+                    <select
+                        value={templateType}
+                        onChange={(e) => setTemplateType(e.target.value)}
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">-- Choose Template --</option>
+                        <option value="Completed Tutorial">📘 Completed Tutorial</option>
+                        <option value="Learned New Skill">🎯 Learned New Skill</option>
+                        <option value="General Update">📝 General Update</option>
+                    </select>
+                </div>
 
                 {templateType === "Completed Tutorial" && (
-                    <>
-                        <input type="text" name="tutorialName" placeholder="Tutorial Name" value={formData.tutorialName} onChange={handleChange} required /><br />
-                        <input type="text" name="keyTakeaway" placeholder="Key Takeaway" value={formData.keyTakeaway} onChange={handleChange} required /><br />
-                        <input type="text" name="timeSpent" placeholder="Time Spent" value={formData.timeSpent} onChange={handleChange} required /><br />
-                    </>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="tutorialName" placeholder="Tutorial Name" value={formData.tutorialName} onChange={handleChange} />
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="keyTakeaway" placeholder="Key Takeaway" value={formData.keyTakeaway} onChange={handleChange} />
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="timeSpent" placeholder="Time Spent" value={formData.timeSpent} onChange={handleChange} />
+                    </div>
                 )}
 
                 {templateType === "Learned New Skill" && (
-                    <>
-                        <input type="text" name="skillName" placeholder="Skill Name" value={formData.skillName} onChange={handleChange} required /><br />
-                        <input type="text" name="howILearned" placeholder="How I Learned" value={formData.howILearned} onChange={handleChange} required /><br />
-                        <input type="text" name="myTip" placeholder="My Tip for Others" value={formData.myTip} onChange={handleChange} required /><br />
-                    </>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="skillName" placeholder="Skill Name" value={formData.skillName} onChange={handleChange} />
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="howILearned" placeholder="How I Learned" value={formData.howILearned} onChange={handleChange} />
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="myTip" placeholder="Your Tip" value={formData.myTip} onChange={handleChange} />
+                    </div>
                 )}
 
                 {templateType === "General Update" && (
-                    <>
-                        <input type="text" name="generalWork" placeholder="Today I worked on" value={formData.generalWork} onChange={handleChange} required /><br />
-                        <input type="text" name="progressMade" placeholder="Progress Made" value={formData.progressMade} onChange={handleChange} required /><br />
-
-                        <p><strong>Feeling</strong></p>
-                        <label><input type="radio" name="feeling" value="😄 Confident" checked={formData.feeling === "😄 Confident"} onChange={handleChange} /> 😄 Confident</label><br />
-                        <label><input type="radio" name="feeling" value="😐 Neutral" checked={formData.feeling === "😐 Neutral"} onChange={handleChange} /> 😐 Neutral</label><br />
-                        <label><input type="radio" name="feeling" value="😕 Confused" checked={formData.feeling === "😕 Confused"} onChange={handleChange} /> 😕 Confused</label><br />
-                    </>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="generalWork" placeholder="What did you work on?" value={formData.generalWork} onChange={handleChange} />
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="progressMade" placeholder="Progress Made" value={formData.progressMade} onChange={handleChange} />
+                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="feeling" placeholder="How are you feeling?" value={formData.feeling} onChange={handleChange} />
+                    </div>
                 )}
 
-                <input type="text" name="tags" placeholder="#tags" value={formData.tags} onChange={handleChange} /><br />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} />
+                    <select name="privacy" value={formData.privacy} onChange={handleChange} className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        <option value="PUBLIC">🌍 Public</option>
+                        <option value="PRIVATE">🔒 Private</option>
+                        <option value="MENTOR_ONLY">👨‍🏫 Mentor Only</option>
+                    </select>
+                </div>
 
-                <p><strong>Privacy</strong></p>
-                <label><input type="radio" name="privacy" value="Public" checked={formData.privacy === "Public"} onChange={handleChange} /> Public</label><br />
-                <label><input type="radio" name="privacy" value="Private" checked={formData.privacy === "Private"} onChange={handleChange} /> Private</label><br />
-                <label><input type="radio" name="privacy" value="Mentor Only" checked={formData.privacy === "Mentor Only"} onChange={handleChange} /> Share with Mentor Only</label><br />
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">🖼 Upload Screenshot (Optional)</label>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="block" />
+                    {screenshot && (
+                        <div className="mt-2">
+                            <img src={screenshot} alt="preview" className="rounded-md shadow-md w-60 border" />
+                        </div>
+                    )}
+                </div>
 
-                <button type="submit" disabled={!isFormValid()} style={{ marginTop: "10px" }}>Post Update</button>
+                <button
+                    type="submit"
+                    disabled={!isFormValid()}
+                    className={`w-full py-2 rounded text-white font-bold transition ${
+                        isFormValid() ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
+                    }`}
+                >
+                    ➕ Submit Progress
+                </button>
             </form>
-            <ToastContainer position="top-center" />
-        </>
+        </div>
     );
 }
+
