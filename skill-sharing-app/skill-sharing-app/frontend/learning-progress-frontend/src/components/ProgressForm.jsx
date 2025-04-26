@@ -53,9 +53,12 @@ export default function ProgressForm({ onAdded }) {
             finalData.description = `Progress: ${formData.progressMade} | Feeling: ${formData.feeling}`;
         }
 
+        // Dismiss all existing toasts before showing a new one
+        toast.dismiss();
+
         axios.post("http://localhost:8080/api/progress", finalData)
             .then(() => {
-                toast.success("✅ Progress Added Successfully!");
+                toast.success("✅ Progress Added Successfully!", { autoClose: 2000, toastId: "success-toast" }); // Use a unique toastId
                 onAdded();
                 setTemplateType("");
                 setFormData({
@@ -72,85 +75,134 @@ export default function ProgressForm({ onAdded }) {
                     privacy: "Public"
                 });
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                toast.error("❌ Failed to add progress. Please try again.", { autoClose: 2000, toastId: "error-toast" }); // Use a unique toastId
+                console.log(err);
+            });
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg border">
-            <ToastContainer />
-            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-blue-700">
-                📘 Add a New Learning Progress
-            </h2>
+        <>
+            <form id="progress-form" onSubmit={handleSubmit} style={{ border: "1px solid #ddd", padding: "15px", borderRadius: "8px", marginBottom: "15px", backgroundColor: "#f9f9f9", width: "120%", marginLeft: "auto", marginRight: "auto" }}>
+                <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "1.5rem" }}>📝 Share Your Learning Progress</h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label className="block font-medium text-gray-700 mb-1">📂 Select Template</label>
-                    <select
-                        value={templateType}
-                        onChange={(e) => setTemplateType(e.target.value)}
-                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">-- Choose Template --</option>
-                        <option value="Completed Tutorial">📘 Completed Tutorial</option>
-                        <option value="Learned New Skill">🎯 Learned New Skill</option>
-                        <option value="General Update">📝 General Update</option>
-                    </select>
+                <div id="template-selection" style={{ marginBottom: "20px" }}>
+                    <h3 style={{ fontWeight: "bold", fontSize: "1.2rem", marginBottom: "5px" }}>Template Selection</h3>
+                    <div className="radio-group">
+                        <label className="radio-option">
+                            <input
+                                type="radio"
+                                value="Completed Tutorial"
+                                checked={templateType === "Completed Tutorial"}
+                                onChange={(e) => setTemplateType(e.target.value)}
+                            />
+                            Completed a Tutorial
+                        </label>
+                        <label className="radio-option">
+                            <input
+                                type="radio"
+                                value="Learned New Skill"
+                                checked={templateType === "Learned New Skill"}
+                                onChange={(e) => setTemplateType(e.target.value)}
+                            />
+                            Learned a New Skill
+                        </label>
+                        <label className="radio-option">
+                            <input
+                                type="radio"
+                                value="General Update"
+                                checked={templateType === "General Update"}
+                                onChange={(e) => setTemplateType(e.target.value)}
+                            />
+                            General Update
+                        </label>
+                    </div>
                 </div>
 
+
+
+
                 {templateType === "Completed Tutorial" && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="tutorialName" placeholder="Tutorial Name" value={formData.tutorialName} onChange={handleChange} />
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="keyTakeaway" placeholder="Key Takeaway" value={formData.keyTakeaway} onChange={handleChange} />
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="timeSpent" placeholder="Time Spent" value={formData.timeSpent} onChange={handleChange} />
-                    </div>
+                    <>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>Tutorial Name</label>
+                            <input type="text" name="tutorialName" placeholder="Enter tutorial name" value={formData.tutorialName} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>Key Takeaway</label>
+                            <input type="text" name="keyTakeaway" placeholder="What did you learn?" value={formData.keyTakeaway} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>Time Spent</label>
+                            <input type="text" name="timeSpent" placeholder="e.g., 2 hours" value={formData.timeSpent} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                    </>
                 )}
 
                 {templateType === "Learned New Skill" && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="skillName" placeholder="Skill Name" value={formData.skillName} onChange={handleChange} />
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="howILearned" placeholder="How I Learned" value={formData.howILearned} onChange={handleChange} />
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="myTip" placeholder="Your Tip" value={formData.myTip} onChange={handleChange} />
-                    </div>
+                    <>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>Skill Name</label>
+                            <input type="text" name="skillName" placeholder="Enter skill name" value={formData.skillName} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>How I Learned</label>
+                            <input type="text" name="howILearned" placeholder="Describe how you learned" value={formData.howILearned} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>My Tip for Others</label>
+                            <input type="text" name="myTip" placeholder="Share a tip" value={formData.myTip} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                    </>
                 )}
 
                 {templateType === "General Update" && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="generalWork" placeholder="What did you work on?" value={formData.generalWork} onChange={handleChange} />
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="progressMade" placeholder="Progress Made" value={formData.progressMade} onChange={handleChange} />
-                        <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="feeling" placeholder="How are you feeling?" value={formData.feeling} onChange={handleChange} />
-                    </div>
+                    <>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>Today I worked on</label>
+                            <input type="text" name="generalWork" placeholder="Describe your work" value={formData.generalWork} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                            <label style={{ fontWeight: "bold" }}>Progress Made</label>
+                            <input type="text" name="progressMade" placeholder="What progress did you make?" value={formData.progressMade} onChange={handleChange} required style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
+                        </div>
+                        <div style={{ marginBottom: "10px" }}>
+                            <p style={{ fontWeight: "bold", marginBottom: "5px" }}>Feeling</p>
+                            <label style={{ marginRight: "10px" }}>
+                                <input type="radio" name="feeling" value="😄 Confident" checked={formData.feeling === "😄 Confident"} onChange={handleChange} /> 😄 Confident
+                            </label>
+                            <label style={{ marginRight: "10px" }}>
+                                <input type="radio" name="feeling" value="😐 Neutral" checked={formData.feeling === "😐 Neutral"} onChange={handleChange} /> 😐 Neutral
+                            </label>
+                            <label>
+                                <input type="radio" name="feeling" value="😕 Confused" checked={formData.feeling === "😕 Confused"} onChange={handleChange} /> 😕 Confused
+                            </label>
+                        </div>
+                    </>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" name="tags" placeholder="Tags (comma-separated)" value={formData.tags} onChange={handleChange} />
-                    <select name="privacy" value={formData.privacy} onChange={handleChange} className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500">
-                        <option value="PUBLIC">🌍 Public</option>
-                        <option value="PRIVATE">🔒 Private</option>
-                        <option value="MENTOR_ONLY">👨‍🏫 Mentor Only</option>
-                    </select>
+                <div style={{ marginBottom: "10px" }}>
+                    <label style={{ fontWeight: "bold" }}>Tags</label>
+                    <input type="text" name="tags" placeholder="#tags (comma-separated)" value={formData.tags} onChange={handleChange} style={{ width: "100%", padding: "6px", marginTop: "5px", borderRadius: "5px", border: "1px solid #ccc" }} />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">🖼 Upload Screenshot (Optional)</label>
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="block" />
-                    {screenshot && (
-                        <div className="mt-2">
-                            <img src={screenshot} alt="preview" className="rounded-md shadow-md w-60 border" />
-                        </div>
-                    )}
+                <div style={{ marginBottom: "10px" }}>
+                    <p style={{ fontWeight: "bold", marginBottom: "5px" }}>Privacy</p>
+                    <label style={{ marginRight: "10px" }}>
+                        <input type="radio" name="privacy" value="Public" checked={formData.privacy === "Public"} onChange={handleChange} /> Public
+                    </label>
+                    <label style={{ marginRight: "10px" }}>
+                        <input type="radio" name="privacy" value="Private" checked={formData.privacy === "Private"} onChange={handleChange} /> Private
+                    </label>
+                    <label>
+                        <input type="radio" name="privacy" value="Mentor Only" checked={formData.privacy === "Mentor Only"} onChange={handleChange} /> Share with Mentor Only
+                    </label>
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={!isFormValid()}
-                    className={`w-full py-2 rounded text-white font-bold transition ${
-                        isFormValid() ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
-                    }`}
-                >
-                    ➕ Submit Progress
-                </button>
+                <button type="submit" disabled={!isFormValid()} style={{ marginTop: "10px", padding: "8px 15px", backgroundColor: "#4CAF50", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>Post Update</button>
             </form>
-        </div>
+            <ToastContainer position="top-center" autoClose={2000} />
+        </>
     );
 }
 
