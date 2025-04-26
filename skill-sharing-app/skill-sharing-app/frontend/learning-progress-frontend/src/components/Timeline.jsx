@@ -22,3 +22,4 @@ export default function Timeline({ progressList }) {
         </div>
     );
 }
+
