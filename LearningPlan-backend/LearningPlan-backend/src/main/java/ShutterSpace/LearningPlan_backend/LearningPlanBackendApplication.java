@@ -1,0 +1,13 @@
+package ShutterSpace.LearningPlan_backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LearningPlanBackendApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(LearningPlanBackendApplication.class, args);
+	}
+
+}
